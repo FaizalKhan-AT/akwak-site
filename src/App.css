@@ -1,3 +1,47 @@
 * {
   font-family: "Inter", sans-serif !important;
 }
+.navbar {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 25;
+}
+.btn-login,
+.btn-reg {
+  background: #302583;
+  color: #fff !important;
+  width: 100px;
+}
+.btn-reg {
+  width: 250px;
+  background: none;
+  border: 1px solid #ffff;
+  transition: all 0.3s ease-in-out;
+}
+.btn-reg:hover {
+  background: #302583;
+  border: none;
+}
+.btn {
+  box-shadow: none !important;
+}
+.banner {
+  background: url("./Assets/banner_img.jpg") no-repeat;
+  background-size: cover;
+  height: 70vh;
+  width: 100%;
+  z-index: 1;
+}
+.overlay {
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.5);
+}
+.banner-container {
+  z-index: 3;
+}
+.footer {
+  background: #252525;
+  color: #fff;
+}
