@@ -1,4 +1,8 @@
-* {
+:root {
+  --primary-color:#302583;
+  --secondary-color:#252525;
+}
+body {
   font-family: "Inter", sans-serif !important;
 }
 .navbar {
@@ -10,27 +14,35 @@
 }
 .btn-login,
 .btn-reg {
-  background: #302583;
+  background: var(--primary-color);
   color: #fff !important;
   width: 100px;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-login:hover{
+  box-shadow: 0 0 15px var(--primary-color) !important;
 }
 .btn-reg {
   width: 250px;
   background: none;
   border: 1px solid #ffff;
-  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 15px #fff !important;
 }
 .btn-reg:hover {
-  background: #302583;
+  background: var(--primary-color);
+  box-shadow: 0 0 15px var(--primary-color) !important;
   border: none;
 }
-.btn {
+
+.btn,
+.form-control {
   box-shadow: none !important;
 }
 .banner {
   background: url("./Assets/banner_img.jpg") no-repeat;
   background-size: cover;
-  height: 70vh;
+  height: 66vh;
   width: 100%;
   z-index: 1;
 }
@@ -44,4 +56,17 @@
 .footer {
   background: #252525;
   color: #fff;
+}
+.card.login {
+  box-shadow: 0 0 10px rgba(0, 0, 0,.2);
+}
+.btn-login.log {
+  width: 50%;
+}
+.btn-login.google {
+  background: var(--secondary-color);
+  width: 90%;
+}
+.btn-login.google:hover {
+  box-shadow: 0 0 15px rgb(60, 60, 60) !important;
 }
