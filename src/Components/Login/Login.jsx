@@ -1,12 +1,24 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import OtpModal from "../otpModal/OtpModal";
 
 function Login() {
   const [phoneNum, setPhoneNum] = useState("");
+  const otpRef = useRef(null);
   const handleChange = (e) => {
     setPhoneNum(e.target.value);
   };
+  const handleOtp = () => {
+    otpRef.current.click();
+  };
   return (
     <>
+      <OtpModal phone={phoneNum} />
+      <button
+        ref={otpRef}
+        data-bs-toggle="modal"
+        data-bs-target="#otp-modal"
+        hidden
+      ></button>
       <div
         style={{ height: "100vh" }}
         className="d-flex justify-content-center align-items-center row w-100"
@@ -24,7 +36,9 @@ function Login() {
             />
           </div>
           <div className="col-md-12 my-3 my-2 text-center">
-            <div className="btn btn-login log fw-bold">Send OTP</div>
+            <div className="btn btn-login log fw-bold" onClick={handleOtp}>
+              Send OTP
+            </div>
           </div>
           <div className="col-md-12 my-3 text-center mb-4 d-flex flex-column align-items-center">
             <p className="text-center">OR</p>

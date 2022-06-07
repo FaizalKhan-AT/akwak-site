@@ -36,11 +36,13 @@ body {
 }
 
 .btn,
-.form-control {
+.form-control,
+.btn-close {
   box-shadow: none !important;
 }
 .banner {
-  background: url("./Assets/banner_img.jpg") no-repeat;
+  /* background: url("./Assets/banner_img.jpg") no-repeat; */
+  background: rgb(60, 82, 138);
   background-size: cover;
   height: 66vh;
   width: 100%;
@@ -69,4 +71,9 @@ body {
 }
 .btn-login.google:hover {
   box-shadow: 0 0 15px rgb(60, 60, 60) !important;
+}
+.nominee-box {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(50%,1fr));
+  column-gap: 5px;
 }
