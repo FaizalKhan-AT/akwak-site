@@ -1,6 +1,6 @@
 :root {
-  --primary-color:#302583;
-  --secondary-color:#252525;
+  --primary-color: #302583;
+  --secondary-color: #252525;
 }
 body {
   font-family: "Inter", sans-serif !important;
@@ -20,7 +20,7 @@ body {
   transition: all 0.3s ease-in-out;
 }
 
-.btn-login:hover{
+.btn-login:hover {
   box-shadow: 0 0 15px var(--primary-color) !important;
 }
 .btn-reg {
@@ -29,12 +29,15 @@ body {
   border: 1px solid #ffff;
   box-shadow: 0 0 15px #fff !important;
 }
-.btn-reg:hover {
+.btn-reg:hover,
+.btn-filter:hover {
   background: var(--primary-color);
   box-shadow: 0 0 15px var(--primary-color) !important;
-  border: none;
+  border-color: var(--primary-color);
 }
-
+.btn-filter:hover {
+  color: #fff !important;
+}
 .btn,
 .form-control,
 .btn-close {
@@ -60,7 +63,7 @@ body {
   color: #fff;
 }
 .card.login {
-  box-shadow: 0 0 10px rgba(0, 0, 0,.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 .btn-login.log {
   width: 50%;
@@ -74,6 +77,32 @@ body {
 }
 .nominee-box {
   display: grid;
-  grid-template-columns: repeat(2,minmax(50%,1fr));
+  grid-template-columns: repeat(2, minmax(50%, 1fr));
   column-gap: 5px;
+}
+.img-box {
+  border: 1px solid #252525;
+  height: 130px;
+  width: 130px;
+  cursor: pointer;
+}
+.btn-filter {
+  border: 1px solid var(--primary-color);
+  background: none;
+  color: var(--primary-color) !important;
+  transition: all 0.3s ease-in-out;
+}
+.card.reg {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.card.reg:hover {
+  box-shadow: 0 0 10px rgba(60, 60, 60, 0.2);
+}
+.btn-filter:hover {
+  box-shadow: none !important;
+}
+.admin-password-field {
+  outline: none;
+  border: none;
 }
