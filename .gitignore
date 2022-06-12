@@ -7,7 +7,7 @@
 /.vscode
 # testing
 /coverage
-
+/Firebase/Config.js
 # production
 /build
 

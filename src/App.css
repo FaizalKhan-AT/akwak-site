@@ -5,6 +5,10 @@
 body {
   font-family: "Inter", sans-serif !important;
 }
+.home {
+  height: 100vh;
+  background: var(--secondary-color);
+}
 .navbar {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   position: sticky;

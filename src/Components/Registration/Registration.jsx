@@ -1,10 +1,31 @@
-import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import React, { useRef, useState, useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext, Firebasedb } from "../../Store/FirebaseContext";
+import { Registrations } from "../../Store/RegContexts";
+import ProgressModal from "./subComponents/ProgressModal";
 
-function Registration({ admin }) {
+function Registration({ admin, add }) {
   const picUpload = useRef(null);
+  const openRef = useRef(null);
+  const closeRef = useRef(null);
   const [profilePic, setProfilePic] = useState(null);
   const [formData, setFormData] = useState({});
+  const [progress, setProgress] = useState(0);
+  const { Storage, db } = useContext(Firebasedb);
+  const { user } = useContext(AuthContext);
+  const { details } = useContext(Registrations);
+  const history = useNavigate();
+  useEffect(() => {
+    if (!user) {
+      history(`${admin ? "/admin" : "/"}`);
+    }
+    if (admin) fetchDetails();
+  }, []);
+  const fetchDetails = () => {
+    setFormData(details);
+  };
   const handlePicChange = (e) => {
     const [img] = e.target.files;
     setProfilePic(img);
@@ -13,16 +34,82 @@ function Registration({ admin }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleSubmit = () => {
-    console.log(formData, profilePic);
+    if (admin) updateData();
+    else uploadData();
+  };
+  const updateData = () => {
+    if (profilePic) uploadImage();
+    else updateDocument({ ...formData, status: "Completed" });
+  };
+  const updateDocument = (data) => {
+    const upRef = doc(db, "registrations", details.docid);
+    updateDoc(upRef, data)
+      .then(() => {
+        closeRef.current.click();
+        history("/admin");
+      })
+      .catch((err) => console.error(err.message));
+  };
+  const uploadImage = () => {
+    openRef.current.click();
+    const storageRef = ref(Storage, `user-imgs/${profilePic.name}`);
+    const task = uploadBytesResumable(storageRef, profilePic);
+    task.on(
+      "state_changed",
+      (snapshot) => {
+        setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+      },
+      (err) => {
+        console.log(err.message);
+      },
+      () => {
+        getDownloadURL(storageRef)
+          .then((url) => {
+            if (admin) {
+              updateDocument({
+                ...formData,
+                status: "Completed",
+                profilePic: url,
+              });
+            } else {
+              uploadToFireStore({
+                ...formData,
+                profilePic: url,
+                uid: user.uid,
+                status: add ? "Completed" : "Pending",
+              });
+            }
+          })
+          .catch((err) => console.error(err.message));
+      }
+    );
+  };
+  const uploadData = () => {
+    uploadImage();
+  };
+  const uploadToFireStore = (data) => {
+    addDoc(collection(db, "registrations"), data)
+      .then(() => {
+        closeRef.current.click();
+        history(add ? "/admin" : "/");
+      })
+      .catch((err) => console.error(err.message));
   };
   return (
     <>
       <Link
-        to="/"
+        to={admin || add ? "/admin" : "/"}
         style={{ width: "50px", height: "50px", borderRadius: "50%" }}
         className="position-fixed m-3 fa-solid fa-angles-left fs-4 d-flex justify-content-center align-items-center btn btn-login"
-        title="Go home"
+        title={admin ? "Admin " : "Go home"}
       ></Link>
+      <ProgressModal closeRef={closeRef} progress={progress} />
+      <button
+        data-bs-toggle="modal"
+        data-bs-target="#progress-modal"
+        hidden
+        ref={openRef}
+      ></button>
       <div className="container">
         <br />
         <h3 className="text-center fw-bold my-3">Member Registration</h3>
@@ -54,12 +141,16 @@ function Registration({ admin }) {
           </div>
           <div className="col-md-6 my-3 mt-4 d-flex gap-3 align-items-center">
             <div className="img-box d-flex  justify-content-center align-items-center">
-              {profilePic ? (
+              {profilePic || (admin && details.profilePic) ? (
                 <img
                   style={{ objectFit: "contain" }}
                   width="120"
                   height="120"
-                  src={profilePic && URL.createObjectURL(profilePic)}
+                  src={
+                    profilePic
+                      ? URL.createObjectURL(profilePic)
+                      : admin && details.profilePic
+                  }
                   alt=""
                 />
               ) : (
@@ -174,7 +265,7 @@ function Registration({ admin }) {
               onChange={handleChange}
             />
           </div>
-          {admin && (
+          {(admin || add) && (
             <>
               <p className="text-center h5 mt-3">To be filled by the admins</p>
               <div className="col-md-6 my-3 mt-4">

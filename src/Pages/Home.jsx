@@ -6,9 +6,11 @@ import Navbar from "../Components/Navbar/Navbar";
 function Home() {
   return (
     <>
-      <Navbar />
-      <Banner />
-      <Footer />
+      <div className="home">
+        <Navbar />
+        <Banner />
+        <Footer />
+      </div>
     </>
   );
 }

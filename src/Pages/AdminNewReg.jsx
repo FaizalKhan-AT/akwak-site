@@ -1,7 +1,7 @@
 import React from "react";
 import Registraion from "../Components/Registration/Registration";
 function AdminNewReg() {
-  return <Registraion admin />;
+  return <Registraion add />;
 }
 
 export default AdminNewReg;

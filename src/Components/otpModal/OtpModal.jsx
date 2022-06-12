@@ -1,16 +1,29 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function OtpModal({ phone }) {
-  const [otp, setOtp] = useState("");
+function OtpModal({ phone, setOtp, otp }) {
   const closeRef = useRef(null);
   const handleChange = (e) => {
     setOtp(e.target.value);
   };
   const history = useNavigate();
   const confirmOtp = () => {
-    closeRef.current.click();
-    history("/registration");
+    let confirmationResult = window.confirmationResult;
+    if (otp.length === 6) {
+      confirmationResult
+        .confirm(otp)
+        .then((result) => {
+          const user = result.user;
+          console.log(user);
+        })
+        .then(() => {
+          closeRef.current.click();
+          history("/registration");
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+    }
   };
   return (
     <>

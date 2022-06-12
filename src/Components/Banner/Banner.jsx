@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../Store/FirebaseContext";
 
 function Banner() {
+  const { user } = useContext(AuthContext);
   return (
     <>
       <div className="banner position-relative">
@@ -11,7 +13,10 @@ function Banner() {
         >
           <h1 className="fw-bold">All Kinds of Welders Association - AKWA</h1>
           <h4>Official Member Registration Portal</h4>
-          <Link to="/Login" className="btn btn-reg py-3 fw-bold">
+          <Link
+            to={`${user ? "/registration" : "/Login"}`}
+            className="btn btn-reg py-3 fw-bold"
+          >
             Continue to Registration
           </Link>
         </div>
