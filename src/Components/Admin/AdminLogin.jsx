@@ -1,29 +1,91 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { AuthContext, Firebasedb } from "../../Store/FirebaseContext";
+import Toast from "../Toast/Toast";
 
-function AdminLogin({ superAdmin }) {
+function AdminLogin({ superAdmin, supernew }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loginDetails, setLoginDetails] = useState({});
-
+  const { db, Auth } = useContext(Firebasedb);
+  const { setAdmin, setSuperAdmin } = useContext(AuthContext);
+  const history = useNavigate();
   const handleChange = (e) => {
     setLoginDetails({ ...loginDetails, [e.target.name]: e.target.value });
   };
-  const handleLogin = () => {};
-
+  const handleLogin = () => {
+    if (supernew) {
+      registerAdmin();
+    } else {
+      loginAdmin();
+    }
+  };
+  const registerAdmin = () => {
+    createUserWithEmailAndPassword(
+      Auth,
+      loginDetails.email,
+      loginDetails.password
+    )
+      .then((user) => {
+        setAdmin(user.user);
+        toFireStore({ ...loginDetails, superAdmin: false, uid: user.user.uid });
+      })
+      .catch((err) => setError(err.message));
+  };
+  const toFireStore = (data) => {
+    addDoc(collection(db, "admins"), data)
+      .then(() => {
+        history("/super-admin");
+      })
+      .catch((err) => setError(err.message));
+  };
+  const loginAdmin = () => {
+    signInWithEmailAndPassword(Auth, loginDetails.email, loginDetails.password)
+      .then((user) => {
+        console.log(user);
+        if (superAdmin) {
+          const qry = query(
+            collection(db, "admins"),
+            where("uid", "==", user.user.uid)
+          );
+          getDocs(qry).then((res) => {
+            let [data] = res.docs.map((r) => r.data());
+            if (data.superAdmin === true) {
+              setSuperAdmin(user.user);
+              history("/super-admin");
+            } else {
+              setError("Super Admin doesn't exists. try another account");
+              return;
+            }
+          });
+        } else {
+          setAdmin(user.user);
+          history("/admin");
+        }
+      })
+      .catch((err) => setError(err.message));
+  };
   return (
     <>
+      {error && <Toast msg={error} setMsg={setError} />}
       <div
         style={{ height: "100vh" }}
         className="d-flex justify-content-center align-items-center"
       >
         <div className="row w-100 justify-content-center">
-          <div className="card login px-4 col-4">
+          <div className="card login px-4 col-md-7 col-lg-4 col-sm-8">
             <div className="card-title h3 fw-bold gotham my-3 text-center">
-              {superAdmin ? "Super Admin" : "Admin"} Login
+              {superAdmin
+                ? "Super Admin Login"
+                : supernew
+                ? "Add new Admin"
+                : "Admin Login"}
             </div>
-            {error && <span className="my-2 text-danger">{error}</span>}
-            {success && <span className="my-2 text-success">{success}</span>}
             <div className="col-md-12 my-3 mt-4">
               <label className="form-label">Email</label>
               <input
@@ -34,6 +96,18 @@ function AdminLogin({ superAdmin }) {
                 onChange={handleChange}
               />
             </div>
+            {supernew && (
+              <div className="col-md-12 my-3 mt-2">
+                <label className="form-label">Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={loginDetails.username}
+                  className="form-control"
+                  onChange={handleChange}
+                />
+              </div>
+            )}
             <div className="col-md-12">
               <label className="form-label">Password</label>
               <div className="position-relative">
@@ -58,7 +132,7 @@ function AdminLogin({ superAdmin }) {
                 className="btn btn-login w-100 fw-bold "
                 onClick={handleLogin}
               >
-                Log In
+                {supernew ? "Add admin" : "Log In"}
               </button>
             </div>
           </div>

@@ -17,7 +17,6 @@ function SuperCard({ admin }) {
             >
               {showDetails ? "Less" : "More"}
             </button>
-            <button className="btn btn-outline-warning">Revoke</button>
             <button className="btn btn-outline-danger">Delete</button>
           </div>
         </div>
@@ -25,7 +24,7 @@ function SuperCard({ admin }) {
       {showDetails && (
         <div className="card admin-card">
           <div className="card-body d-flex flex-column gap-2">
-            <label>Username : {admin.username}</label>
+            <label>Email : {admin.email}</label>
             <label>
               Password :
               <span className="position-relative">
@@ -47,11 +46,11 @@ function SuperCard({ admin }) {
               />
               Show Password
             </label>
-            <span className="d-flex justify-content-center mt-3">
+            {/* <span className="d-flex justify-content-center mt-3">
               <Link to="/admin/edit" className="btn btn-outline-primary">
                 Edit
               </Link>
-            </span>
+            </span> */}
           </div>
         </div>
       )}

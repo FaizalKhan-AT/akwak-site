@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Toast from "../Toast/Toast";
 
 function OtpModal({ phone, setOtp, otp }) {
   const closeRef = useRef(null);
+  const [error, setError] = useState("");
   const handleChange = (e) => {
     setOtp(e.target.value);
   };
@@ -14,19 +16,19 @@ function OtpModal({ phone, setOtp, otp }) {
         .confirm(otp)
         .then((result) => {
           const user = result.user;
-          console.log(user);
         })
         .then(() => {
           closeRef.current.click();
           history("/registration");
         })
         .catch((error) => {
-          console.log(error.message);
+          setError(error.message);
         });
     }
   };
   return (
     <>
+      {error && <Toast msg={error} setMsg={setError} />}
       <div
         id="otp-modal"
         className="modal fade"
@@ -57,7 +59,11 @@ function OtpModal({ phone, setOtp, otp }) {
                   onChange={handleChange}
                   placeholder="Enter the OTP"
                 />
-                <button className="btn btn-login" onClick={confirmOtp}>
+                <button
+                  className="btn btn-login"
+                  onClick={confirmOtp}
+                  disabled={otp.length === 6 ? false : true}
+                >
                   Confirm
                 </button>
               </div>

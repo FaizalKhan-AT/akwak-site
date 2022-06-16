@@ -3,8 +3,12 @@ import { Link } from "react-router-dom";
 import AdminCard from "./subComponents/AdminCard";
 import { Firebasedb } from "../../Store/FirebaseContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { utils, writeFile } from "xlsx";
+import Toast from "../Toast/Toast";
+
 function AdminHome() {
   const [reg, setReg] = useState([]);
+  const [error, setError] = useState("");
   const { db } = useContext(Firebasedb);
   const regRef = collection(db, "registrations");
   useEffect(() => {
@@ -19,7 +23,7 @@ function AdminHome() {
           })
         );
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => setError(err.message));
   };
   const handleFilter = (key) => {
     let qu = query(regRef, where("status", "==", key));
@@ -31,7 +35,13 @@ function AdminHome() {
           })
         );
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => setError(err.message));
+  };
+  const handleXlGeneration = () => {
+    let wb = utils.book_new();
+    let ws = utils.json_to_sheet(reg);
+    utils.book_append_sheet(wb, ws, "Registration Details");
+    writeFile(wb, "Registrations.xlsx");
   };
   return (
     <>
@@ -41,6 +51,7 @@ function AdminHome() {
         className="position-fixed m-3 fa-solid fa-angles-left fs-4 d-flex justify-content-center align-items-center btn btn-login"
         title="Go home"
       ></Link>
+      {error && <Toast msg={error} setMsg={setError} />}
       <div className="container">
         <div className="d-flex justify-content-center my-5 h2">Admin Panel</div>
         <div className="d-flex gap-4 justify-content-center">
@@ -61,9 +72,17 @@ function AdminHome() {
           </button>
         </div>
         <div className="mt-5">
-          <Link to="/admin/new" className="btn btn-filter">
-            Add new member
-          </Link>
+          <div className="d-flex justify-content-between my-2">
+            <Link to="/admin/new" className="btn btn-filter">
+              Add new member
+            </Link>
+            <button
+              className="btn btn-outline-success text-end"
+              onClick={handleXlGeneration}
+            >
+              Generate Excel Sheet
+            </button>
+          </div>
           {reg.length > 0 ? (
             reg.map((val, idx) => {
               return <AdminCard key={idx} reg={val} />;

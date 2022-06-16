@@ -11,6 +11,7 @@ import SuperAdminLogin from "./Pages/SuperAdminLogin";
 import SuperAdminPanel from "./Pages/SuperAdminPanel";
 import FirebaseContext from "./Store/FirebaseContext";
 import RegContexts from "./Store/RegContexts";
+import SuperAdminNew from "./Pages/SuperAdminNew";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/admin/new" element={<AdminNewReg />} />
             <Route path="/super-admin" element={<SuperAdminPanel />} />
             <Route path="/super-admin/login" element={<SuperAdminLogin />} />
+            <Route path="/super-admin/new" element={<SuperAdminNew />} />
           </Routes>
         </Router>
       </FirebaseContext>

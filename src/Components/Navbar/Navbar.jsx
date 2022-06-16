@@ -9,9 +9,9 @@ function Navbar() {
         <Link to="/" className="navbar-brand d-flex align-items-center">
           <img src={logo} width="70" alt="All Kerala Welders Association" />
         </Link>
-        <Link to="/Login" className="btn btn-login fw-bold py-2">
+        {/* <Link to="/Login" className="btn btn-login fw-bold py-2">
           Login
-        </Link>
+        </Link> */}
       </div>
     </nav>
   );

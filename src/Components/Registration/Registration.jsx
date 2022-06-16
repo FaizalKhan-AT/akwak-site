@@ -1,9 +1,16 @@
+import { signOut } from "firebase/auth";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useRef, useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext, Firebasedb } from "../../Store/FirebaseContext";
 import { Registrations } from "../../Store/RegContexts";
+import Toast from "../Toast/Toast";
+import {
+  validateAadhar,
+  validateBloodGroup,
+  validatePhone,
+} from "../Validation";
 import ProgressModal from "./subComponents/ProgressModal";
 
 function Registration({ admin, add }) {
@@ -12,9 +19,10 @@ function Registration({ admin, add }) {
   const closeRef = useRef(null);
   const [profilePic, setProfilePic] = useState(null);
   const [formData, setFormData] = useState({});
+  const [error, setError] = useState("");
   const [progress, setProgress] = useState(0);
-  const { Storage, db } = useContext(Firebasedb);
-  const { user } = useContext(AuthContext);
+  const { Storage, db, Auth } = useContext(Firebasedb);
+  const { user, setUser } = useContext(AuthContext);
   const { details } = useContext(Registrations);
   const history = useNavigate();
   useEffect(() => {
@@ -34,8 +42,104 @@ function Registration({ admin, add }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleSubmit = () => {
-    if (admin) updateData();
-    else uploadData();
+    const val = validateForm();
+    if (val) {
+      if (admin) updateData();
+      else uploadData();
+    }
+  };
+  const validateForm = () => {
+    const {
+      applicantName,
+      applicantAddress,
+      dob,
+      phoneNumber,
+      nominee,
+      relationNominee,
+      jobNature,
+      bloodGroup,
+      aadharNo,
+      institutionName,
+      attestingMember,
+      idCardNo,
+      dateofIdExp,
+      dateofIdIssue,
+    } = formData;
+    if (
+      !applicantName &&
+      !applicantAddress &&
+      !phoneNumber &&
+      !nominee &&
+      !relationNominee &&
+      !jobNature &&
+      !bloodGroup
+    ) {
+      setError("Fill all the required fields marked as (*)");
+      return;
+    }
+    if (admin || add) {
+      if (!attestingMember && !idCardNo) {
+        setError("Fill all the required fields marked as (*)");
+        return;
+      }
+      if (!dateofIdIssue) {
+        setError("Enter Id Issue Date");
+        return;
+      }
+      if (!dateofIdExp) {
+        setError("Enter Id Expiry Date");
+        return;
+      }
+    }
+    if (applicantName.length < 4) {
+      setError("Applicant Name Must be more than 3 characters");
+      return;
+    }
+    if (!validatePhone(phoneNumber)) {
+      setError("Enter 10 digit phone number");
+      return;
+    }
+    if (applicantAddress.length < 4) {
+      setError("Applicant Address Must be more than 3 characters");
+      return;
+    }
+    if (nominee.length > 4) {
+      setError("Nominee name must be more than 3 characters");
+      return;
+    }
+    if (relationNominee.length > 4) {
+      setError("Relationship with nominee must be more than 3 characters");
+      return;
+    }
+    if (jobNature.length > 4) {
+      setError("Nature of job must be more than 3 characters");
+      return;
+    }
+    if (!validateBloodGroup(bloodGroup)) {
+      setError("Not a Blood group or field is empty");
+      return;
+    }
+    if (!dob) {
+      setError("Date of birth must be specified");
+      return;
+    }
+    if (!profilePic) {
+      setError("Please upload a profile picture");
+      return;
+    }
+    if (aadharNo.length !== 12 && aadharNo.length > 0) {
+      if (!validateAadhar(aadharNo)) {
+        setError("Aadhar no must be 12 digits");
+        return;
+      }
+    }
+    if (institutionName.length > 0 && institutionName.length < 3) {
+      setError("Institution name must be more than 3 characters");
+      return;
+    }
+
+    setError("");
+    return true;
   };
   const updateData = () => {
     if (profilePic) uploadImage();
@@ -48,7 +152,7 @@ function Registration({ admin, add }) {
         closeRef.current.click();
         history("/admin");
       })
-      .catch((err) => console.error(err.message));
+      .catch((err) => setError(err.message));
   };
   const uploadImage = () => {
     openRef.current.click();
@@ -60,7 +164,7 @@ function Registration({ admin, add }) {
         setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
       },
       (err) => {
-        console.log(err.message);
+        setError(err.message);
       },
       () => {
         getDownloadURL(storageRef)
@@ -80,7 +184,7 @@ function Registration({ admin, add }) {
               });
             }
           })
-          .catch((err) => console.error(err.message));
+          .catch((err) => setError(err.message));
       }
     );
   };
@@ -91,9 +195,14 @@ function Registration({ admin, add }) {
     addDoc(collection(db, "registrations"), data)
       .then(() => {
         closeRef.current.click();
+        if (!add) {
+          signOut(Auth)
+            .then(() => setUser(null))
+            .catch((err) => setError(err.message));
+        }
         history(add ? "/admin" : "/");
       })
-      .catch((err) => console.error(err.message));
+      .catch((err) => setError(err.message));
   };
   return (
     <>
@@ -104,6 +213,7 @@ function Registration({ admin, add }) {
         title={admin ? "Admin " : "Go home"}
       ></Link>
       <ProgressModal closeRef={closeRef} progress={progress} />
+      {error && <Toast msg={error} setMsg={setError} />}
       <button
         data-bs-toggle="modal"
         data-bs-target="#progress-modal"
@@ -227,7 +337,7 @@ function Registration({ admin, add }) {
               type="text"
               value={formData.bloodGroup}
               name="bloodGroup"
-              className="form-control"
+              className="form-control text-uppercase"
               onChange={handleChange}
             />
           </div>
@@ -286,7 +396,7 @@ function Registration({ admin, add }) {
                   AKWA ID Card Number <span className="text-danger">*</span>
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   value={formData.idCardNo}
                   name="idCardNo"
                   className="form-control"

@@ -1,5 +1,6 @@
 import React, { useRef, useState, useContext } from "react";
 import OtpModal from "../otpModal/OtpModal";
+import Toast from "../Toast/Toast";
 import { Firebasedb } from "../../Store/FirebaseContext";
 import {
   RecaptchaVerifier,
@@ -7,15 +8,17 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [phoneNum, setPhoneNum] = useState("");
-  const [otp, setOtp] = useState();
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
   const otpRef = useRef(null);
   const loginBtnRef = useRef(null);
   const { Auth } = useContext(Firebasedb);
   const provider = new GoogleAuthProvider();
-
+  const history = useNavigate();
   const handleChange = (e) => {
     setPhoneNum(e.target.value);
   };
@@ -35,7 +38,7 @@ function Login() {
         window.confirmationResult = confirmationResult;
       })
       .catch((error) => {
-        console.log(error.message);
+        setError(error.message);
       });
   };
   const handleOtp = () => {
@@ -46,15 +49,15 @@ function Login() {
   const handleGoogleLogin = () => {
     signInWithPopup(Auth, provider)
       .then((result) => {
-        const user = result.user;
-        console.log(user);
+        history("/registration");
       })
       .catch((error) => {
-        console.log(error.message);
+        setError(error.message);
       });
   };
   return (
     <>
+      {error && <Toast msg={error} setMsg={setError} />}
       <OtpModal setOtp={setOtp} otp={otp} phone={phoneNum} />
       <button
         ref={otpRef}
@@ -79,14 +82,15 @@ function Login() {
             />
           </div>
           <div className="col-md-12 my-3 my-2 text-center">
-            <div
+            <button
               id="login-btn"
               className="btn btn-login log fw-bold"
               ref={loginBtnRef}
               onClick={handleOtp}
+              disabled={phoneNum.length === 10 ? false : true}
             >
               Send OTP
-            </div>
+            </button>
           </div>
           <div className="col-md-12 my-3 text-center mb-4 d-flex flex-column align-items-center">
             <p className="text-center">OR</p>
