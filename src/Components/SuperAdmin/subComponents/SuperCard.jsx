@@ -36,7 +36,6 @@ function SuperCard({ admin, fetchData }) {
           let docid = Doc[0].docid;
           const ref = doc(db, "admins", docid);
           // deleteUser(uid).then((user) => console.log(user));
-          // return;
           deleteDoc(ref)
             .then(() => {
               setError("Admin deleted successfully");
