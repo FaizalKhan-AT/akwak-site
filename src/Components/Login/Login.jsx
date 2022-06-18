@@ -9,6 +9,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { validatePhone } from "../Validation";
 
 function Login() {
   const [phoneNum, setPhoneNum] = useState("");
@@ -67,7 +68,7 @@ function Login() {
       ></button>
       <div
         style={{ height: "100vh" }}
-        className="d-flex justify-content-center align-items-center row w-100"
+        className="d-flex justify-content-center align-items-center log row w-100"
       >
         <div className="card login px-4 row col-md-6 col-sm-8 col-lg-4">
           <div className="card-title h3 fw-bold mt-3 text-center">Register</div>
@@ -87,7 +88,7 @@ function Login() {
               className="btn btn-login log fw-bold"
               ref={loginBtnRef}
               onClick={handleOtp}
-              disabled={phoneNum.length === 10 ? false : true}
+              disabled={!validatePhone(phoneNum) ? true : false}
             >
               Send OTP
             </button>

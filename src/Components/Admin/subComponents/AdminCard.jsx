@@ -1,5 +1,4 @@
-import { setUserId } from "firebase/analytics";
-import { deleteDoc, doc, setDoc } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import React, { useContext, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Firebasedb } from "../../../Store/FirebaseContext";
@@ -33,31 +32,48 @@ function AdminCard({ reg, fetchData }) {
       {error && <Toast msg={error} setMsg={setError} />}
       <div className="card reg my-3 py-3 px-2">
         <div className="d-flex justify-content-between align-items-center px-2">
-          <h5 className="mb-0">{reg.applicantName}</h5>
+          <h5 className="mb-0 adm-name">{reg.applicantName}</h5>
           <div className="d-flex gap-3 align-items-center">
             <p
-              className={`mb-0 ${
+              className={`mb-0 adm-desk ${
                 reg.status === "Completed" ? "text-success" : "text-danger"
               }`}
             >
               {reg.status}
             </p>
-            {reg.status === "Completed" && (
+            <p
+              title={reg.status === "Completed" ? "Completed" : "Pending"}
+              className={`mb-0 adm-mob fa-solid fs-4 ${
+                reg.status === "Completed"
+                  ? "text-success fa-check"
+                  : "text-danger fa-times"
+              }`}
+            ></p>
+            {/* {reg.status === "Completed" && (
               <button className="btn btn-outline-dark fa-regular fa-file-pdf fs-4"></button>
-            )}
+            )} */}
             <Link
               to="/admin/edit"
-              className="btn btn-outline-primary"
+              className="btn adm-desk btn-outline-primary"
               onClick={() => setDetails(reg)}
             >
               Edit
             </Link>
             <button
-              className="btn btn-outline-danger"
+              className="btn adm-desk btn-outline-danger"
               onClick={() => delRef.current.click()}
             >
               Delete
             </button>
+            <Link
+              to="/admin/edit"
+              className="btn adm-mob btn-outline-primary fa-solid fa-pen-to-square fs-5"
+              onClick={() => setDetails(reg)}
+            ></Link>
+            <button
+              className="btn adm-mob btn-outline-danger fa-solid fa-trash fs-5"
+              onClick={() => delRef.current.click()}
+            ></button>
             <button
               ref={delRef}
               hidden

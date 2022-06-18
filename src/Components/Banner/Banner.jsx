@@ -11,11 +11,13 @@ function Banner() {
           style={{ height: "100%" }}
           className="container banner-container gap-3 flex-column position-relative d-flex align-items-center justify-content-center text-light"
         >
-          <h1 className="fw-bold text-center">All Kinds of Welders Association - AKWA</h1>
-          <h4>Official Member Registration Portal</h4>
+          <h1 className="fw-bold text-center banner-text">
+            All Kinds of Welders Association - AKWA
+          </h1>
+          <h4 className="banner-sub">Official Member Registration Portal</h4>
           <Link
             to={`${user ? "/registration" : "/Login"}`}
-            className="btn btn-reg py-3 fw-bold"
+            className="btn btn-reg d-flex justify-content-center align-items-center py-3 fw-bold"
           >
             Continue to Registration
           </Link>

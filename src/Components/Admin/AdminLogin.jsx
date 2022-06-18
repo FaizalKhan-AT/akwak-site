@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -11,7 +11,6 @@ import Toast from "../Toast/Toast";
 function AdminLogin({ superAdmin, supernew }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [adm, setAdm] = useState();
   const [loginDetails, setLoginDetails] = useState({});
   const { db, Auth } = useContext(Firebasedb);
   const { setAdmin, setSuperAdmin } = useContext(AuthContext);
@@ -78,7 +77,7 @@ function AdminLogin({ superAdmin, supernew }) {
         style={{ height: "100vh" }}
         className="d-flex justify-content-center align-items-center"
       >
-        <div className="row w-100 justify-content-center">
+        <div className="row w-100 log justify-content-center">
           <div className="card login px-4 col-md-7 col-lg-4 col-sm-8">
             <div className="card-title h3 fw-bold gotham my-3 text-center">
               {superAdmin

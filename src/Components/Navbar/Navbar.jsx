@@ -5,7 +5,7 @@ import logo from "../../Assets/akwa_logo.png";
 function Navbar() {
   return (
     <nav className="navbar navbar-lg">
-      <div className="container-fluid d-flex align-items-center justify-content-between mx-5">
+      <div className="container-fluid navbar-cont d-flex align-items-center justify-content-between mx-5">
         <Link to="/" className="navbar-brand d-flex align-items-center">
           <img src={logo} width="70" alt="All Kerala Welders Association" />
         </Link>

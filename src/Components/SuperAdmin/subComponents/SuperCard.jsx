@@ -17,7 +17,7 @@ function SuperCard({ admin, fetchData }) {
   const [showDetails, setShowDetails] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { setId } = useContext(Registrations);
-  const { Auth, db } = useContext(Firebasedb);
+  const { db } = useContext(Firebasedb);
   const [error, setError] = useState("");
   const [Doc, setDoc] = useState();
   const handleDelete = (id) => {
@@ -32,18 +32,18 @@ function SuperCard({ admin, fetchData }) {
         );
       })
       .then(() => {
-        let uid = Doc[0].uid;
-        let docid = Doc[0].docid;
-        const ref = doc(db, "admins", docid);
-        // deleteUser(uid, Auth).then((user) => console.log(user));
-        return;
-        deleteDoc(ref)
-          .then(() => {})
-          .then(() => {
-            setError("Admin deleted successfully");
-            fetchData();
-          })
-          .catch((err) => setError(err.message));
+        if (Object.keys(Doc).length > 0) {
+          let docid = Doc[0].docid;
+          const ref = doc(db, "admins", docid);
+          // deleteUser(uid).then((user) => console.log(user));
+          // return;
+          deleteDoc(ref)
+            .then(() => {
+              setError("Admin deleted successfully");
+              fetchData();
+            })
+            .catch((err) => setError(err.message));
+        }
       })
       .catch((err) => setError(err.message));
   };
@@ -62,19 +62,31 @@ function SuperCard({ admin, fetchData }) {
           <h5 className="mb-0">{admin.username}</h5>
           <div className="d-flex gap-3 align-items-center">
             <button
-              className="btn btn-filter"
+              className="btn btn-filter adm-desk"
               onClick={() => setShowDetails(!showDetails)}
             >
               {showDetails ? "Less" : "More"}
             </button>
             <button
-              className="btn btn-outline-danger"
+              className={`btn btn-filter adm-mob fa-solid ${
+                showDetails ? "fa-caret-down" : "fa-caret-up"
+              }`}
+              onClick={() => setShowDetails(!showDetails)}
+            ></button>
+            <button
+              className="btn adm-desk btn-outline-danger"
               data-bs-toggle="modal"
               data-bs-target="#deleteModal"
               onClick={() => setId(admin.uid)}
             >
               Delete
             </button>
+            <button
+              className="btn adm-mob btn-outline-danger fa-solid fa-trash fs-5"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              onClick={() => setId(admin.uid)}
+            ></button>
           </div>
         </div>
       </div>

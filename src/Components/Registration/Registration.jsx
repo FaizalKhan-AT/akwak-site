@@ -120,9 +120,11 @@ function Registration({ admin, add }) {
       setError("Date of birth must be specified");
       return;
     }
-    if (!profilePic) {
-      setError("Please upload a profile picture");
-      return;
+    if (!admin) {
+      if (!profilePic) {
+        setError("Please upload a profile picture");
+        return;
+      }
     }
     if (aadharNo && aadharNo.length > 0) {
       if (!validateAadhar(aadharNo)) {
@@ -206,7 +208,7 @@ function Registration({ admin, add }) {
       <Link
         to={admin || add ? "/admin" : "/"}
         style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-        className="position-fixed m-3 fa-solid fa-angles-left fs-4 d-flex justify-content-center align-items-center btn btn-login"
+        className="position-fixed m-3 fa-solid back fa-angles-left fs-4 d-flex justify-content-center align-items-center btn btn-login"
         title={admin ? "Admin " : "Go home"}
       ></Link>
       <ProgressModal closeRef={closeRef} progress={progress} />
@@ -219,10 +221,10 @@ function Registration({ admin, add }) {
       ></button>
       <div className="container">
         <br />
-        <h3 className="text-center fw-bold my-3">Member Registration</h3>
+        <h3 className="text-center fw-bold my-3">Member Registration </h3>
         <br />
-        <div className="row w-100">
-          <div className="col-md-6 my-3 mt-4">
+        <div className="reg row w-100">
+          <div className="col-lg-6  my-3 mt-4">
             <label className="form-label">
               Applicant Name <span className="text-danger">*</span>
             </label>
@@ -233,7 +235,7 @@ function Registration({ admin, add }) {
               className="form-control"
               onChange={handleChange}
             />
-            <div className="col-md-12 my-3 mt-4">
+            <div className="col-lg-12  my-3 mt-4">
               <label className="form-label">
                 Phone Number <span className="text-danger">*</span>
               </label>
@@ -246,7 +248,7 @@ function Registration({ admin, add }) {
               />
             </div>
           </div>
-          <div className="col-md-6 my-3 mt-4 d-flex gap-3 align-items-center">
+          <div className="col-lg-6 reg-profile my-3 mt-4 d-flex gap-3 align-items-center">
             <div className="img-box d-flex  justify-content-center align-items-center">
               {profilePic || (admin && details.profilePic) ? (
                 <img
@@ -266,7 +268,7 @@ function Registration({ admin, add }) {
             </div>
             <div
               style={{ width: "40%", height: "50px" }}
-              className="btn btn-login d-flex justify-content-center align-items-center fw-bold"
+              className="btn reg btn-login d-flex justify-content-center align-items-center fw-bold"
               onClick={() => picUpload.current.click()}
             >
               Upload Image
@@ -280,7 +282,7 @@ function Registration({ admin, add }) {
               ref={picUpload}
             />
           </div>
-          <div className="col-md-6 my-3 mt-4">
+          <div className="col-lg-6 my-3 mt-4">
             <label className="form-label">
               Address of the Applicant <span className="text-danger">*</span>
             </label>
@@ -292,7 +294,7 @@ function Registration({ admin, add }) {
               onChange={handleChange}
             />
           </div>
-          <div className="col-md-6 my-3 mt-4">
+          <div className="col-lg-6 my-3 mt-4">
             <label className="form-label">
               Nominee / Relationship with the Applicant
               <span className="text-danger"> *</span>
@@ -314,7 +316,7 @@ function Registration({ admin, add }) {
               />
             </div>
           </div>
-          <div className="col-md-6 my-3 mt-4">
+          <div className="col-lg-6 my-3 mt-4">
             <label className="form-label">
               Nature of Job <span className="text-danger">*</span>
             </label>
@@ -326,7 +328,7 @@ function Registration({ admin, add }) {
               onChange={handleChange}
             />
           </div>
-          <div className="col-md-6 my-3 mt-4">
+          <div className="col-lg-6 my-3 mt-4">
             <label className="form-label">
               Blood Group <span className="text-danger">*</span>
             </label>
@@ -338,7 +340,7 @@ function Registration({ admin, add }) {
               onChange={handleChange}
             />
           </div>
-          <div className="col-md-6 my-3 mt-4">
+          <div className="col-lg-6 my-3 mt-4">
             <label className="form-label">
               Date of Birth <span className="text-danger">*</span>
             </label>
@@ -350,7 +352,7 @@ function Registration({ admin, add }) {
               onChange={handleChange}
             />
           </div>
-          <div className="col-md-6  mt-4">
+          <div className="col-lg-6  mt-4">
             <label className="form-label">Aadhar card number</label>
             <input
               type="tel"
@@ -360,7 +362,7 @@ function Registration({ admin, add }) {
               onChange={handleChange}
             />
           </div>
-          <div className="col-md-6 my-3 mt-4">
+          <div className="col-lg-6 my-3 mt-4">
             <label className="form-label">
               Name of the institution (if any)
             </label>
@@ -375,7 +377,7 @@ function Registration({ admin, add }) {
           {(admin || add) && (
             <>
               <p className="text-center h5 mt-3">To be filled by the admins</p>
-              <div className="col-md-6 my-3 mt-4">
+              <div className="col-lg-6 my-3 mt-4">
                 <label className="form-label">
                   Attesting committee member / Admin{" "}
                   <span className="text-danger">*</span>
@@ -388,7 +390,7 @@ function Registration({ admin, add }) {
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-md-6 my-3 mt-4">
+              <div className="col-lg-6 my-3 mt-4">
                 <label className="form-label">
                   AKWA ID Card Number <span className="text-danger">*</span>
                 </label>
@@ -400,7 +402,7 @@ function Registration({ admin, add }) {
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-md-6 my-3 mt-4">
+              <div className="col-lg-6 my-3 mt-4">
                 <label className="form-label">
                   Date of Issue of Id Card{" "}
                   <span className="text-danger">*</span>
@@ -413,7 +415,7 @@ function Registration({ admin, add }) {
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-md-6 my-3 mt-4">
+              <div className="col-lg-6 my-3 mt-4">
                 <label className="form-label">
                   Date of Expiry of Id Card{" "}
                   <span className="text-danger">*</span>
@@ -428,10 +430,10 @@ function Registration({ admin, add }) {
               </div>
             </>
           )}
-          <div className="col-md-12 my-3 mt-4 d-flex justify-content-center w-100">
+          <div className="col-lg-12 my-3 mt-4 d-flex justify-content-center w-100">
             <button
               style={{ width: "40%" }}
-              className="btn btn-login fw-bold"
+              className="btn reg btn-login fw-bold"
               onClick={handleSubmit}
             >
               Submit

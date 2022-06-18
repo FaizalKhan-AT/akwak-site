@@ -15,7 +15,7 @@ function OtpModal({ phone, setOtp, otp }) {
       confirmationResult
         .confirm(otp)
         .then((result) => {
-          const user = result.user;
+          // const user = result.user;
         })
         .then(() => {
           closeRef.current.click();
@@ -38,7 +38,7 @@ function OtpModal({ phone, setOtp, otp }) {
         <div className="modal-dialog  modal-dialog-centered py-2">
           <div className="modal-content">
             <div style={{ borderBottom: "none" }} className="modal-header">
-              <p className="modal-title fs-5 fw-bold">
+              <p className="modal-title fs-5 fw-bold log-otp-title">
                 An otp has been sent to this number {phone}
               </p>
               <button
@@ -50,7 +50,7 @@ function OtpModal({ phone, setOtp, otp }) {
               ></button>
             </div>
             <div className="modal-body">
-              <div className="px-4 d-flex flex-column align-items-center gap-3">
+              <div className="px-4 log-otp d-flex flex-column align-items-center gap-3">
                 <input
                   type="tel"
                   name="otp"

@@ -5,18 +5,39 @@ import { AuthContext, Firebasedb } from "../../Store/FirebaseContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { utils, writeFile } from "xlsx";
 import Toast from "../Toast/Toast";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 function AdminHome() {
   const [reg, setReg] = useState([]);
   const [error, setError] = useState("");
   const history = useNavigate();
-  const { db } = useContext(Firebasedb);
-  const { admin } = useContext(AuthContext);
+  const { db, Auth } = useContext(Firebasedb);
+  const { setAdmin } = useContext(AuthContext);
   const regRef = collection(db, "registrations");
   useEffect(() => {
-    // if (!admin) history("/admin/login");
     fetchData();
+    isAuthenticated();
   }, []);
+  const isAuthenticated = () => {
+    onAuthStateChanged(Auth, (person) => {
+      if (person) {
+        const docRef = collection(db, "admins");
+        const qu = query(docRef, where("uid", "==", person.uid));
+        getDocs(qu).then((snap) => {
+          const [data] = snap.docs.map((doc) => doc.data());
+          if (data.superAdmin === false) {
+            setAdmin(data);
+          } else history("/admin/login");
+        });
+      } else history("/admin/login");
+    });
+  };
+  const handleLogout = () => {
+    signOut(Auth)
+      .then(() => setAdmin(null))
+      .then(() => isAuthenticated())
+      .catch((err) => setError(err.message));
+  };
   const fetchData = () => {
     getDocs(regRef)
       .then((snap) => {
@@ -51,11 +72,17 @@ function AdminHome() {
       <Link
         to="/"
         style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-        className="position-fixed m-3 fa-solid fa-angles-left fs-4 d-flex justify-content-center align-items-center btn btn-login"
+        className="position-fixed m-3 back fa-solid fa-angles-left fs-4 d-flex justify-content-center align-items-center btn btn-login"
         title="Go home"
       ></Link>
       {error && <Toast msg={error} setMsg={setError} />}
+
       <div className="container">
+        <div className="d-flex align-items-center justify-content-end w-100 pt-5">
+          <button className="btn btn-filter" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
         <div className="d-flex justify-content-center my-5 h2">Admin Panel</div>
         <div className="d-flex gap-4 justify-content-center">
           <button className="btn btn-filter" onClick={fetchData}>
@@ -76,15 +103,23 @@ function AdminHome() {
         </div>
         <div className="mt-5">
           <div className="d-flex justify-content-between my-2">
-            <Link to="/admin/new" className="btn btn-filter">
+            <Link to="/admin/new" className="adm-desk btn btn-filter">
               Add new member
             </Link>
+            <Link
+              to="/admin/new"
+              className="fs-3 py-3 adm-mob btn btn-filter fa-solid fa-user-plus d-flex justify-content-center align-items-center"
+            ></Link>
             <button
-              className="btn btn-outline-success text-end"
+              className="btn adm-desk btn-outline-success text-end"
               onClick={handleXlGeneration}
             >
               Generate Excel Sheet
             </button>
+            <button
+              className="btn adm-mob fa-solid fa-file-excel fs-3 btn-outline-success text-end"
+              onClick={handleXlGeneration}
+            ></button>
           </div>
           {reg.length > 0 ? (
             reg.map((val, idx) => {

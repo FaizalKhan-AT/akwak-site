@@ -21,8 +21,8 @@ function Footer() {
           ></a>
         </div>
         <div className="d-flex flex-column justify-content-center align-items-center">
-          <p className="fs-6">&copy; 2022 AKWA</p>
-          <p className="fs-6 mt-0">
+          <p className="fs-6 ft">&copy; 2022 AKWA</p>
+          <p className="fs-6 mt-0 ft">
             Site developed by{" "}
             <a
               href="https://faizalkhan-at.github.io/animated-porfolio-angular/"

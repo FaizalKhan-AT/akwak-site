@@ -110,3 +110,87 @@ body {
   outline: none;
   border: none;
 }
+.adm-mob {
+  display: none !important;
+}
+.adm-desk {
+  display: block !important;
+}
+@media screen and (max-width: 990px) {
+  .reg-profile {
+    justify-content: center;
+  }
+}
+@media screen and (max-width: 900px) {
+  .reg.row,
+  .log.row {
+    --bs-gutter-x: 0 !important;
+  }
+}
+@media screen and (max-width: 768px) {
+  .banner-text {
+    font-size: 2rem;
+  }
+}
+@media screen and (max-width: 600px) {
+  .adm-desk {
+    display: none !important;
+  }
+  .adm-mob {
+    display: block !important;
+  }
+}
+@media screen and (max-width: 535px) {
+  .reg-profile {
+    flex-direction: column;
+  }
+  .banner-text {
+    font-size: 1.8rem;
+  }
+}
+@media screen and (max-width: 425px) {
+  .navbar-cont {
+    justify-content: center !important;
+  }
+}
+
+@media screen and (max-width: 491px) {
+  .back.btn-login {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 1rem !important;
+  }
+  .adm-name {
+    font-size: 1.2rem;
+  }
+  .banner-text {
+    font-size: 1.4rem;
+  }
+  .banner-sub {
+    font-size: 1.1rem;
+  }
+  .btn-reg {
+    width: 200px;
+    font-size: 0.9rem;
+  }
+}
+@media screen and (max-width: 385px) {
+  .banner-text {
+    font-size: 1.16rem;
+  }
+  .banner-sub {
+    font-size: 0.9rem;
+  }
+  .ft {
+    font-size: 14px !important;
+  }
+  .reg.btn-login {
+    width: 70% !important;
+  }
+  .log-otp {
+    padding: 0 0 !important;
+  }
+  .log-otp-title {
+    font-size: 1.1rem !important;
+  }
+}

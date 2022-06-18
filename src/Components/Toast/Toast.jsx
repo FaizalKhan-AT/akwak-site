@@ -4,9 +4,9 @@ function Toast({ msg, setMsg }) {
   return (
     <>
       <div
-        style={{ bottom: "15px", zIndex: "1000" }}
+        style={{ bottom: "15px", zIndex: "1000", right: "15px" }}
         id="Toast"
-        className="toast position-fixed end-0  show align-items-center text-white bg-danger border-0"
+        className="toast position-fixed show align-items-center text-white bg-danger border-0"
         role="alert"
         aria-live="assertive"
         aria-atomic="true"
