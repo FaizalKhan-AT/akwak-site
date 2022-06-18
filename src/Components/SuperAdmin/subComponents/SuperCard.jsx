@@ -1,12 +1,62 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { deleteUser } from "firebase/auth";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import React, { useContext, useEffect, useState } from "react";
+import { Firebasedb } from "../../../Store/FirebaseContext";
+import { Registrations } from "../../../Store/RegContexts";
+import DeleteModal from "../../DeleteModal/DeleteModal";
+import Toast from "../../Toast/Toast";
 
-function SuperCard({ admin }) {
+function SuperCard({ admin, fetchData }) {
   const [showDetails, setShowDetails] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { setId } = useContext(Registrations);
+  const { Auth, db } = useContext(Firebasedb);
+  const [error, setError] = useState("");
+  const [Doc, setDoc] = useState();
+  const handleDelete = (id) => {
+    const docRef = collection(db, "admins");
+    let qu = query(docRef, where("uid", "==", id));
+    getDocs(qu)
+      .then((snap) => {
+        setDoc(
+          snap.docs.map((post) => {
+            return { ...post.data(), docid: post.id };
+          })
+        );
+      })
+      .then(() => {
+        let uid = Doc[0].uid;
+        let docid = Doc[0].docid;
+        const ref = doc(db, "admins", docid);
+        // deleteUser(uid, Auth).then((user) => console.log(user));
+        return;
+        deleteDoc(ref)
+          .then(() => {})
+          .then(() => {
+            setError("Admin deleted successfully");
+            fetchData();
+          })
+          .catch((err) => setError(err.message));
+      })
+      .catch((err) => setError(err.message));
+  };
+  const handleConfirm = (id) => {
+    handleDelete(id);
+  };
   return (
     <>
-      {" "}
+      <DeleteModal
+        text="Are you sure to delete this admin"
+        handleConfirm={handleConfirm}
+      />
+      {error && <Toast msg={error} setMsg={setError} />}
       <div className="card reg my-3 py-3 px-2">
         <div className="d-flex justify-content-between align-items-center px-2">
           <h5 className="mb-0">{admin.username}</h5>
@@ -17,7 +67,14 @@ function SuperCard({ admin }) {
             >
               {showDetails ? "Less" : "More"}
             </button>
-            <button className="btn btn-outline-danger">Delete</button>
+            <button
+              className="btn btn-outline-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              onClick={() => setId(admin.uid)}
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -46,11 +103,6 @@ function SuperCard({ admin }) {
               />
               Show Password
             </label>
-            {/* <span className="d-flex justify-content-center mt-3">
-              <Link to="/admin/edit" className="btn btn-outline-primary">
-                Edit
-              </Link>
-            </span> */}
           </div>
         </div>
       )}

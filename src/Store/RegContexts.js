@@ -3,8 +3,9 @@ import { createContext, useContext, useState } from "react";
 export const Registrations = createContext(null);
 function RegContexts({ children }) {
   const [details, setDetails] = useState();
+  const [id, setId] = useState();
   return (
-    <Registrations.Provider value={{ details, setDetails }}>
+    <Registrations.Provider value={{ details, setDetails, id, setId }}>
       {children}
     </Registrations.Provider>
   );

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AdminCard from "./subComponents/AdminCard";
-import { Firebasedb } from "../../Store/FirebaseContext";
+import { AuthContext, Firebasedb } from "../../Store/FirebaseContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { utils, writeFile } from "xlsx";
 import Toast from "../Toast/Toast";
@@ -9,9 +9,12 @@ import Toast from "../Toast/Toast";
 function AdminHome() {
   const [reg, setReg] = useState([]);
   const [error, setError] = useState("");
+  const history = useNavigate();
   const { db } = useContext(Firebasedb);
+  const { admin } = useContext(AuthContext);
   const regRef = collection(db, "registrations");
   useEffect(() => {
+    // if (!admin) history("/admin/login");
     fetchData();
   }, []);
   const fetchData = () => {
@@ -85,7 +88,7 @@ function AdminHome() {
           </div>
           {reg.length > 0 ? (
             reg.map((val, idx) => {
-              return <AdminCard key={idx} reg={val} />;
+              return <AdminCard key={idx} reg={val} fetchData={fetchData} />;
             })
           ) : (
             <h3 className="text-center my-3">No Registrations yet !</h3>

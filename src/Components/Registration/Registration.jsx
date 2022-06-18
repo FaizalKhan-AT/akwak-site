@@ -26,9 +26,6 @@ function Registration({ admin, add }) {
   const { details } = useContext(Registrations);
   const history = useNavigate();
   useEffect(() => {
-    if (!user) {
-      history(`${admin ? "/admin" : "/"}`);
-    }
     if (admin) fetchDetails();
   }, []);
   const fetchDetails = () => {
@@ -103,15 +100,15 @@ function Registration({ admin, add }) {
       setError("Applicant Address Must be more than 3 characters");
       return;
     }
-    if (nominee.length > 4) {
+    if (nominee.length < 4) {
       setError("Nominee name must be more than 3 characters");
       return;
     }
-    if (relationNominee.length > 4) {
+    if (relationNominee.length < 4) {
       setError("Relationship with nominee must be more than 3 characters");
       return;
     }
-    if (jobNature.length > 4) {
+    if (jobNature.length < 4) {
       setError("Nature of job must be more than 3 characters");
       return;
     }
@@ -127,13 +124,13 @@ function Registration({ admin, add }) {
       setError("Please upload a profile picture");
       return;
     }
-    if (aadharNo.length !== 12 && aadharNo.length > 0) {
+    if (aadharNo && aadharNo.length > 0) {
       if (!validateAadhar(aadharNo)) {
         setError("Aadhar no must be 12 digits");
         return;
       }
     }
-    if (institutionName.length > 0 && institutionName.length < 3) {
+    if (institutionName && institutionName.length < 3) {
       setError("Institution name must be more than 3 characters");
       return;
     }

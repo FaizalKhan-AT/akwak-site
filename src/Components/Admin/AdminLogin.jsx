@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -11,6 +11,7 @@ import Toast from "../Toast/Toast";
 function AdminLogin({ superAdmin, supernew }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [adm, setAdm] = useState();
   const [loginDetails, setLoginDetails] = useState({});
   const { db, Auth } = useContext(Firebasedb);
   const { setAdmin, setSuperAdmin } = useContext(AuthContext);
@@ -18,6 +19,7 @@ function AdminLogin({ superAdmin, supernew }) {
   const handleChange = (e) => {
     setLoginDetails({ ...loginDetails, [e.target.name]: e.target.value });
   };
+
   const handleLogin = () => {
     if (supernew) {
       registerAdmin();
@@ -47,7 +49,6 @@ function AdminLogin({ superAdmin, supernew }) {
   const loginAdmin = () => {
     signInWithEmailAndPassword(Auth, loginDetails.email, loginDetails.password)
       .then((user) => {
-        console.log(user);
         if (superAdmin) {
           const qry = query(
             collection(db, "admins"),

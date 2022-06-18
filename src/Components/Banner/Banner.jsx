@@ -11,7 +11,7 @@ function Banner() {
           style={{ height: "100%" }}
           className="container banner-container gap-3 flex-column position-relative d-flex align-items-center justify-content-center text-light"
         >
-          <h1 className="fw-bold">All Kinds of Welders Association - AKWA</h1>
+          <h1 className="fw-bold text-center">All Kinds of Welders Association - AKWA</h1>
           <h4>Official Member Registration Portal</h4>
           <Link
             to={`${user ? "/registration" : "/Login"}`}

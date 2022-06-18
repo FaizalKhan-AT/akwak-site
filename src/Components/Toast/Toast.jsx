@@ -4,7 +4,7 @@ function Toast({ msg, setMsg }) {
   return (
     <>
       <div
-        style={{ bottom: "15px" }}
+        style={{ bottom: "15px", zIndex: "1000" }}
         id="Toast"
         className="toast position-fixed end-0  show align-items-center text-white bg-danger border-0"
         role="alert"
