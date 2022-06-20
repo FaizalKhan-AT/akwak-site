@@ -25,6 +25,23 @@ function Registration({ admin, add }) {
   const { user, setUser } = useContext(AuthContext);
   const { details } = useContext(Registrations);
   const history = useNavigate();
+  const districts = [
+    "Alappuzha",
+    "Ernakulam",
+    "Idukki",
+    "Kannur",
+    "Kasaragod",
+    "Kollam",
+    "Kottayam",
+    "Kozhikode",
+    "Malappuram",
+    "Palakkad",
+    "Pathanamthitta",
+    "Thiruvananthapuram",
+    "Thrissur",
+    "Wayanad",
+  ];
+
   useEffect(() => {
     if (admin) fetchDetails();
   }, []);
@@ -61,6 +78,7 @@ function Registration({ admin, add }) {
       idCardNo,
       dateofIdExp,
       dateofIdIssue,
+      district,
     } = formData;
     if (
       !applicantName &&
@@ -69,7 +87,8 @@ function Registration({ admin, add }) {
       !nominee &&
       !relationNominee &&
       !jobNature &&
-      !bloodGroup
+      !bloodGroup &&
+      !district
     ) {
       setError("Fill all the required fields marked as (*)");
       return;
@@ -114,6 +133,10 @@ function Registration({ admin, add }) {
     }
     if (!validateBloodGroup(bloodGroup)) {
       setError("Not a Blood group or field is empty");
+      return;
+    }
+    if (!district) {
+      setError("Select a district");
       return;
     }
     if (!dob) {
@@ -342,6 +365,28 @@ function Registration({ admin, add }) {
           </div>
           <div className="col-lg-6 my-3 mt-4">
             <label className="form-label">
+              Select Districts <span className="text-danger">*</span>
+            </label>
+            <select
+              className="form-control"
+              name="district"
+              onChange={handleChange}
+              value={formData.district}
+            >
+              <option disabled selected>
+                ---select your district---
+              </option>
+              {districts.map((val, idx) => {
+                return (
+                  <option key={idx} value={val}>
+                    {val}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <div className="col-lg-6 my-3 mt-4">
+            <label className="form-label">
               Date of Birth <span className="text-danger">*</span>
             </label>
             <input
@@ -395,7 +440,7 @@ function Registration({ admin, add }) {
                   AKWA ID Card Number <span className="text-danger">*</span>
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   value={formData.idCardNo}
                   name="idCardNo"
                   className="form-control"

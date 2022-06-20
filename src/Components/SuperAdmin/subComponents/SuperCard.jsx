@@ -1,4 +1,3 @@
-import { deleteUser } from "firebase/auth";
 import {
   collection,
   deleteDoc,
@@ -7,7 +6,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Firebasedb } from "../../../Store/FirebaseContext";
 import { Registrations } from "../../../Store/RegContexts";
 import DeleteModal from "../../DeleteModal/DeleteModal";
