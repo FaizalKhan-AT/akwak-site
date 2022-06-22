@@ -20,7 +20,7 @@ function SuperAdminHome() {
         getDocs(qu).then((snap) => {
           const [data] = snap.docs.map((doc) => doc.data());
           if (data.superAdmin === true) {
-            setSuperAdmin(data);
+            setSuperAdmin(person);
           } else history("/super-admin/login");
         });
       } else history("/super-admin/login");

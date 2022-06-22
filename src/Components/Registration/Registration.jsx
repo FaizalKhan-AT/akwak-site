@@ -1,5 +1,13 @@
 import { signOut } from "firebase/auth";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useRef, useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,8 +30,9 @@ function Registration({ admin, add }) {
   const [error, setError] = useState("");
   const [progress, setProgress] = useState(0);
   const { Storage, db, Auth } = useContext(Firebasedb);
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, admin: Adm } = useContext(AuthContext);
   const { details } = useContext(Registrations);
+  const regRef = collection(db, "registrations");
   const history = useNavigate();
   const districts = [
     "Alappuzha",
@@ -59,7 +68,22 @@ function Registration({ admin, add }) {
     const val = validateForm();
     if (val) {
       if (admin) updateData();
-      else uploadData();
+      else {
+        if (!add) {
+          let qu = query(regRef, where("uid", "==", user.uid));
+          getDocs(qu)
+            .then((snap) => {
+              let data = snap.docs.map((post) => {
+                return { ...post.data(), docid: post.id };
+              });
+              if (data.length > 0) {
+                setError("Couldn't register user. user already registered.");
+                return;
+              } else uploadData();
+            })
+            .catch((err) => setError(err.message));
+        } else uploadData();
+      }
     }
   };
   const validateForm = () => {
@@ -94,7 +118,7 @@ function Registration({ admin, add }) {
       return;
     }
     if (admin || add) {
-      if (!attestingMember && !idCardNo) {
+      if (!attestingMember || !idCardNo) {
         setError("Fill all the required fields marked as (*)");
         return;
       }
@@ -201,7 +225,7 @@ function Registration({ admin, add }) {
               uploadToFireStore({
                 ...formData,
                 profilePic: url,
-                uid: user.uid,
+                uid: user ? user.uid : Adm && Adm.uid,
                 status: add ? "Completed" : "Pending",
               });
             }
@@ -230,7 +254,11 @@ function Registration({ admin, add }) {
     <>
       <Link
         to={admin || add ? "/admin" : "/"}
-        style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+        style={{
+          width: "50px",
+          height: "50px",
+          borderRadius: "50%",
+        }}
         className="position-fixed m-3 fa-solid back fa-angles-left fs-4 d-flex justify-content-center align-items-center btn btn-login"
         title={admin ? "Admin " : "Go home"}
       ></Link>
@@ -398,7 +426,9 @@ function Registration({ admin, add }) {
             />
           </div>
           <div className="col-lg-6  mt-4">
-            <label className="form-label">Aadhar card number</label>
+            <label className="form-label">
+              Aadhar /Voter ID / Driving licence number
+            </label>
             <input
               type="tel"
               value={formData.aadharNo}

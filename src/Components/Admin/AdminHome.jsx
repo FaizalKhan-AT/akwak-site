@@ -10,6 +10,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 function AdminHome() {
   const [reg, setReg] = useState([]);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
   const history = useNavigate();
   const { db, Auth } = useContext(Firebasedb);
   const { setAdmin } = useContext(AuthContext);
@@ -26,7 +27,7 @@ function AdminHome() {
         getDocs(qu).then((snap) => {
           const [data] = snap.docs.map((doc) => doc.data());
           if (data.superAdmin === false) {
-            setAdmin(data);
+            setAdmin(person);
           } else history("/admin/login");
         });
       } else history("/admin/login");
@@ -67,11 +68,32 @@ function AdminHome() {
     utils.book_append_sheet(wb, ws, "Registration Details");
     writeFile(wb, "Registrations.xlsx");
   };
+  const handleSearch = () => {
+    let qu = query(
+      regRef,
+      where("idCardNo", ">=", search),
+      where("idCardNo", "<=", search + "\uf8ff")
+    );
+    getDocs(qu)
+      .then((snap) => {
+        setReg(
+          snap.docs.map((post) => {
+            return { ...post.data(), docid: post.id };
+          })
+        );
+      })
+      .catch((err) => setError(err.message));
+  };
   return (
     <>
       <Link
         to="/"
-        style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+        style={{
+          width: "50px",
+          height: "50px",
+          borderRadius: "50%",
+          zIndex: 100,
+        }}
         className="position-fixed m-3 back fa-solid fa-angles-left fs-4 d-flex justify-content-center align-items-center btn btn-login"
         title="Go home"
       ></Link>
@@ -84,6 +106,22 @@ function AdminHome() {
           </button>
         </div>
         <div className="d-flex justify-content-center my-5 h2">Admin Panel</div>
+        <div className="row w-100 my-3 mb-5 justify-content-center">
+          <div className="d-flex gap-2 col-lg-6 col-md-6 col-sm-10 align-items-center justify-content-center">
+            <input
+              type="search"
+              className="form-control"
+              name="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Enter akwa id no for search"
+            />
+            <button
+              className="btn btn-filter fa-solid fa-search fs-5 py-2"
+              onClick={handleSearch}
+            ></button>
+          </div>
+        </div>
         <div className="d-flex gap-4 justify-content-center">
           <button className="btn btn-filter" onClick={fetchData}>
             All

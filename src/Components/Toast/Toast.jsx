@@ -1,6 +1,10 @@
-import React from "react";
+import { signOut } from "firebase/auth";
+import React, { useContext } from "react";
+import { AuthContext, Firebasedb } from "../../Store/FirebaseContext";
 
 function Toast({ msg, setMsg }) {
+  const { Auth } = useContext(Firebasedb);
+  const { setUser } = useContext(AuthContext);
   return (
     <>
       <div
@@ -18,7 +22,10 @@ function Toast({ msg, setMsg }) {
             className="btn-close btn-close-white me-2 m-auto"
             data-bs-dismiss="toast"
             aria-label="Close"
-            onClick={() => setMsg("")}
+            onClick={() => {
+              signOut(Auth).then(() => setUser(null));
+              setMsg("");
+            }}
           ></button>
         </div>
       </div>
