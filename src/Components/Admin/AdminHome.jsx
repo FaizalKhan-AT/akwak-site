@@ -11,6 +11,7 @@ function AdminHome() {
   const [reg, setReg] = useState([]);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [searchData, setSearchData] = useState([]);
   const history = useNavigate();
   const { db, Auth } = useContext(Firebasedb);
   const { setAdmin } = useContext(AuthContext);
@@ -43,6 +44,11 @@ function AdminHome() {
     getDocs(regRef)
       .then((snap) => {
         setReg(
+          snap.docs.map((post) => {
+            return { ...post.data(), docid: post.id };
+          })
+        );
+        setSearchData(
           snap.docs.map((post) => {
             return { ...post.data(), docid: post.id };
           })
@@ -84,6 +90,22 @@ function AdminHome() {
       })
       .catch((err) => setError(err.message));
   };
+  const searchBarChanged = (e) => {
+    setSearch(e.target.value);
+    handleInstantSearch(e.target.value);
+  };
+  const handleInstantSearch = (key) => {
+    let data = searchData;
+    if (key === "") {
+      fetchData();
+      return;
+    }
+    setReg(
+      data.filter((item) =>
+        item.applicantName.toLowerCase().includes(key.toLowerCase())
+      )
+    );
+  };
   return (
     <>
       <Link
@@ -113,8 +135,8 @@ function AdminHome() {
               className="form-control"
               name="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Enter akwa id no for search"
+              onChange={searchBarChanged}
+              placeholder="Search - akwa id , name "
             />
             <button
               className="btn btn-filter fa-solid fa-search fs-5 py-2"
